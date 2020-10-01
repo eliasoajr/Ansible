@@ -1,0 +1,43 @@
+---
+- name: Instalacao de pacotes
+  hosts: tomcat
+  become: true
+  become_user: root
+  tasks:
+    - name: Instalando pacotes Apache, OpenJDK, Net-tools, monit, libapache2-mod-jk
+      apt: 
+        name: 
+           - apache2
+           - monit
+           - openjdk-14-jdk
+           - net-tools
+           - libapache2-mod-jk
+        state: latest
+        state: present
+        update_cache: true
+
+    - name: Instalação Tomcat 9
+      shell: |
+           addgroup --system tomcat
+           adduser --system --shell /bin/nologin --gid 120 --home /opt/tomcat tomcat
+           cd /opt
+           curl -O http://mirror.nbtelecom.com.br/apache/tomcat/tomcat-9/v9.0.38/bin/apache-tomcat-9.0.38.tar.gz
+           tar xfz apache-tomcat-9.0.38.tar.gz
+           ln -s /opt/apache-tomcat-9.0.38 /opt/tomcat
+           chown -R tomcat: apache-tomcat-9.0.38/
+
+  hosts: haproxy
+  become: true
+  become_user: root
+  tasks:
+    - name: Adicionando repositorio
+      apt_repository:
+        repo: 'ppa:vbernat/haproxy-2.1'
+
+    - name: Instalando pacote HAProxy
+      apt:
+        name:
+           - haproxy
+        state: latest
+        state: present
+        update_cache: true
