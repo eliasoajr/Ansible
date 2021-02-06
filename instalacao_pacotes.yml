@@ -1,3 +1,4 @@
+#scritp para instalação de pacotes diversos
 ---
 - name: Instalacao de pacotes
   hosts: tomcat
